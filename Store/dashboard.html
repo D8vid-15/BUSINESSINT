@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Dashboard | Business Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --store-color: #10b981;
+            --store-dark: #059669;
+            --store-light: #d1fae5;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            color: var(--store-color);
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--dark);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-details {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: calc(100vh - 68px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid var(--light-gray);
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 0 24px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+        }
+        
+        .menu-item {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            font-size: 14px;
+            color: var(--dark);
+        }
+        
+        .menu-item:hover {
+            background-color: var(--store-light);
+        }
+        
+        .menu-item.active {
+            background-color: var(--store-light);
+            border-left-color: var(--store-color);
+            color: var(--store-color);
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 32px;
+            min-width: 0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 24px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: var(--store-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--store-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
+        }
+        
+        .stat-card h3 {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+        
+        .stat-card .subtext {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Tables */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        thead {
+            background-color: #f8fafc;
+        }
+        
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--light-gray);
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--light-gray);
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-released {
+            background-color: var(--store-light);
+            color: var(--store-dark);
+        }
+        
+        .status-completed {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .stock-low {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .stock-ok {
+            color: var(--success);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            background: none;
+        }
+        
+        .action-btn.view {
+            background-color: #f0f9ff;
+            color: #0ea5e9;
+            border-color: #0ea5e9;
+        }
+        
+        .action-btn.view:hover {
+            background-color: #0ea5e9;
+            color: white;
+        }
+        
+        .action-btn.release {
+            background-color: var(--store-light);
+            color: var(--store-color);
+            border-color: var(--store-color);
+        }
+        
+        .action-btn.release:hover {
+            background-color: var(--store-color);
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--light-gray);
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        /* Release Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .order-details {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background-color: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--store-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .order-items-table {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .order-items-table th {
+            padding: 10px;
+            background-color: #f8fafc;
+            font-size: 12px;
+        }
+        
+        .order-items-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        /* Inventory Grid */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .inventory-item {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        
+        .inventory-item:hover {
+            border-color: var(--store-color);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+        }
+        
+        .inventory-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .inventory-item-code {
+            font-size: 12px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+        
+        .inventory-item-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .inventory-item-stock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .stock-bar {
+            flex: 1;
+            height: 8px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .stock-level {
+            height: 100%;
+            background-color: var(--store-color);
+        }
+        
+        /* Carton sizes display */
+        .carton-sizes {
+            margin-top: 12px;
+        }
+        
+        .carton-size-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        
+        .carton-size-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .carton-size-count {
+            font-weight: 600;
+            color: var(--store-dark);
+        }
+        
+        /* Workflow Timeline */
+        .workflow-timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        .workflow-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--light-gray);
+        }
+        
+        .workflow-step {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .workflow-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .workflow-marker {
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .workflow-marker.active {
+            background-color: var(--store-color);
+        }
+        
+        .workflow-marker.completed {
+            background-color: var(--store-dark);
+        }
+        
+        .workflow-content {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 16px;
+        }
+        
+        /* Stock availability indicator */
+        .stock-check {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .stock-available {
+            background-color: var(--store-light);
+            color: var(--store-dark);
+        }
+        
+        .stock-insufficient {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 0;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--light-gray);
+            }
+            
+            .sidebar-header {
+                display: none;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                flex: 1;
+                padding: 0;
+            }
+            
+            .menu-item {
+                padding: 16px 20px;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+                white-space: nowrap;
+            }
+            
+            .menu-item.active {
+                border-left: none;
+                border-bottom-color: var(--store-color);
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                <i class="fas fa-warehouse logo-icon"></i>
+                <span class="logo-text">Store Department</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Store User</div>
+                    <div class="user-role">Store Department</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Store Portal</div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" data-page="pending-releases">
+                    <i class="fas fa-clock"></i>
+                    <span>Pending Releases</span>
+                </li>
+                <li class="menu-item" data-page="inventory">
+                    <i class="fas fa-boxes"></i>
+                    <span>Inventory</span>
+                </li>
+                <li class="menu-item" data-page="released-orders">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Released Orders</span>
+                </li>
+                <li class="menu-item" data-page="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content">
+                <div class="dashboard-header">
+                    <h1>Store Dashboard</h1>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="quickReleaseBtn">
+                            <i class="fas fa-bolt"></i> Quick Release
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Pending Releases</h3>
+                        <div class="value" id="pendingReleasesCount">0</div>
+                        <div class="subtext">Orders awaiting release</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Today's Releases</h3>
+                        <div class="value" id="todayReleasesCount">0</div>
+                        <div class="subtext">Orders released today</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Low Stock Items</h3>
+                        <div class="value" id="lowStockCount">0</div>
+                        <div class="subtext">Need production</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Inventory Value</h3>
+                        <div class="value" id="inventoryValue">₦0</div>
+                        <div class="subtext">Total cartons in stock</div>
+                    </div>
+                </div>
+                
+                <!-- Recent Pending Releases -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Pending Releases</h2>
+                        <button class="btn btn-secondary" id="viewAllReleasesBtn">
+                            View All
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="recentPendingTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Cartons</th>
+                                    <th>Expected Delivery</th>
+                                    <th>Approved Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Pending releases will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="noPendingReleases" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>No Pending Releases</h3>
+                        <p>All approved orders have been released</p>
+                    </div>
+                </div>
+                
+                <!-- Store Workflow -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Order Release Workflow</h2>
+                    </div>
+                    
+                    <div class="workflow-timeline">
+                        <div class="workflow-step">
+                            <div class="workflow-marker completed">1</div>
+                            <div class="workflow-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Sales Order Created</div>
+                                <div style="font-size: 13px; color: var(--gray);">
+                                    Sales department creates order with carton details
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-step">
+                            <div class="workflow-marker completed">2</div>
+                            <div class="workflow-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Accounts Verification</div>
+                                <div style="font-size: 13px; color: var(--gray);">
+                                    Accounts department verifies payment and approves order
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-step">
+                            <div class="workflow-marker active">3</div>
+                            <div class="workflow-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Store Release</div>
+                                <div style="font-size: 13px; color: var(--gray);">
+                                    Store department checks stock and releases goods
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-step">
+                            <div class="workflow-marker">4</div>
+                            <div class="workflow-content">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Delivery Complete</div>
+                                <div style="font-size: 13px; color: var(--gray);">
+                                    Order delivered to customer and marked complete
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pending Releases Page -->
+            <div id="pending-releasesPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Pending Releases</h1>
+                    <div>
+                        <input type="text" class="form-control" id="searchReleases" placeholder="Search orders..." style="width: 200px; display: inline-block; margin-right: 12px;">
+                        <select class="form-control" id="releaseFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Pending</option>
+                            <option value="today">Delivery Today</option>
+                            <option value="urgent">Urgent Priority</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="table-container">
+                        <table id="allPendingTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Cartons</th>
+                                    <th>Approved Date</th>
+                                    <th>Delivery Date</th>
+                                    <th>Stock Check</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Pending releases will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="noFilteredReleases" style="display: none;">
+                        <i class="fas fa-search"></i>
+                        <h3>No Pending Releases</h3>
+                        <p>No orders require stock release</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inventory Page -->
+            <div id="inventoryPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Inventory Management</h1>
+                    <div>
+                        <select class="form-control" id="inventoryFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Products</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                            <option value="oil">Oil Products</option>
+                        </select>
+                        <button class="btn btn-primary" id="refreshInventoryBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Total Products</h3>
+                        <div class="value" id="totalProductsCount">8</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Total Cartons</h3>
+                        <div class="value" id="totalCartonsItems">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Low Stock Items</h3>
+                        <div class="value" id="lowStockItemsCount">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Inventory Value</h3>
+                        <div class="value" id="inventoryStockValue">₦0</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Product Inventory</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary" id="printInventoryBtn">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-grid" id="inventoryGrid">
+                        <!-- Inventory items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Released Orders Page -->
+            <div id="released-ordersPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Released Orders</h1>
+                    <div>
+                        <input type="date" class="form-control" id="releasedDateFrom" style="width: auto; display: inline-block; margin-right: 8px;">
+                        <input type="date" class="form-control" id="releasedDateTo" style="width: auto; display: inline-block; margin-right: 12px;">
+                        <button class="btn btn-secondary" id="filterReleasedBtn">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="table-container">
+                        <table id="releasedTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Cartons</th>
+                                    <th>Release Date</th>
+                                    <th>Released By</th>
+                                    <th>Delivery Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Released orders will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="noReleasedOrders" style="display: none;">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Released Orders</h3>
+                        <p>No orders have been released yet</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Store Reports</h1>
+                    <div>
+                        <select class="form-control" id="reportPeriod" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                        <button class="btn btn-primary" id="generateReportBtn">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Store Reports</h3>
+                        <p>Inventory and release reports will be displayed here</p>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-file-excel"></i> Stock Report
+                            </button>
+                            <button class="btn btn-secondary" style="margin-left: 10px;">
+                                <i class="fas fa-file-pdf"></i> Release Summary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Release Order Modal -->
+    <div class="modal" id="releaseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Release Order</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="order-details">
+                    <div class="detail-row">
+                        <span>Order ID:</span>
+                        <span id="modalOrderId">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Customer:</span>
+                        <span id="modalCustomer">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Approved Date:</span>
+                        <span id="modalApprovedDate">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Delivery Date:</span>
+                        <span id="modalDeliveryDate">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Total Cartons:</span>
+                        <span id="modalTotalCartons" style="font-weight: 600;">0</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Order Items:</label>
+                    <table class="order-items-table" id="modalOrderItems">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Carton Sizes</th>
+                                <th>Stock Check</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Order items will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="stockCheckResult" style="margin-bottom: 20px;">
+                    <!-- Stock check results will be displayed here -->
+                </div>
+                
+                <form id="releaseForm">
+                    <div class="form-group">
+                        <label for="releaseDate">Release Date *</label>
+                        <input type="date" id="releaseDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="releasedBy">Released By *</label>
+                        <input type="text" id="releasedBy" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="releaseNotes">Release Notes (Optional)</label>
+                        <textarea id="releaseNotes" class="form-control" placeholder="Add any notes about this release..."></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <i class="fas fa-check-circle"></i> Confirm Release
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelReleaseBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store inventory data
+        let storeInventory = JSON.parse(localStorage.getItem('store_products') || '{}');
+        
+        // Stock movement data
+        let stockMovement = JSON.parse(localStorage.getItem('store_stock_movement') || '[]');
+        
+        // Product specifications
+        const productSpecs = {
+            'DLS': { 
+                name: 'DLS', 
+                availableSizes: [4, 25], 
+                category: 'Oil',
+                minStock: { 4: 50, 25: 20 }
+            },
+            'PLUS': { 
+                name: 'PLUS', 
+                availableSizes: [1], 
+                category: 'Oil',
+                minStock: { 1: 100 }
+            },
+            'SUPER': { 
+                name: 'SUPER', 
+                availableSizes: [1, 4], 
+                category: 'Oil',
+                minStock: { 1: 80, 4: 40 }
+            },
+            'EXTRA': { 
+                name: 'EXTRA', 
+                availableSizes: [1, 4, 5], 
+                category: 'Oil',
+                minStock: { 1: 60, 4: 30, 5: 20 }
+            },
+            'POWER': { 
+                name: 'POWER', 
+                availableSizes: [4, 25], 
+                category: 'Oil',
+                minStock: { 4: 40, 25: 15 }
+            },
+            'ATF': { 
+                name: 'ATF', 
+                availableSizes: [1, 4], 
+                category: 'Oil',
+                minStock: { 1: 70, 4: 35 }
+            },
+            'GEAR OIL': { 
+                name: 'GEAR OIL', 
+                availableSizes: [4, 25], 
+                category: 'Oil',
+                minStock: { 4: 30, 25: 10 }
+            },
+            'HYD': { 
+                name: 'HYD', 
+                availableSizes: [25], 
+                category: 'Oil',
+                minStock: { 25: 25 }
+            }
+        };
+        
+        // Pending releases from accounts department
+        let pendingReleases = JSON.parse(localStorage.getItem('store_pending_releases') || '[]');
+        
+        // Released orders
+        let releasedOrders = JSON.parse(localStorage.getItem('store_released_orders') || '[]');
+        
+        // Current order being processed
+        let currentOrder = null;
+        
+        // DOM Elements
+        const pages = {
+            dashboard: document.getElementById('dashboardPage'),
+            'pending-releases': document.getElementById('pending-releasesPage'),
+            inventory: document.getElementById('inventoryPage'),
+            'released-orders': document.getElementById('released-ordersPage'),
+            reports: document.getElementById('reportsPage')
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const isAuthenticated = localStorage.getItem('store_authenticated');
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user data
+            const userData = JSON.parse(localStorage.getItem('store_user') || '{}');
+            if (userData.name) {
+                document.getElementById('userName').textContent = userData.name;
+                document.getElementById('releasedBy').value = userData.name;
+            }
+            
+            // Initialize data
+            initializeData();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Set today's date for release
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('releaseDate').value = today;
+            
+            // Load initial view
+            showPage('dashboard');
+            updateDashboardStats();
+            loadRecentPendingReleases();
+        });
+        
+        function initializeData() {
+            // Initialize store inventory if not exists
+            if (!localStorage.getItem('store_products')) {
+                // Initialize empty inventory for each product
+                Object.keys(productSpecs).forEach(productName => {
+                    const product = productSpecs[productName];
+                    storeInventory[productName] = {
+                        name: productName,
+                        category: product.category,
+                        totalCartons: 0
+                    };
+                    
+                    // Initialize carton counts for each size
+                    product.availableSizes.forEach(size => {
+                        storeInventory[productName][`carton${size}L`] = 0;
+                    });
+                });
+                
+                // Add sample data for demo
+                storeInventory['SUPER'].carton1L = 100;
+                storeInventory['SUPER'].carton4L = 50;
+                storeInventory['SUPER'].totalCartons = 150;
+                
+                storeInventory['EXTRA'].carton1L = 30;
+                storeInventory['EXTRA'].carton4L = 20;
+                storeInventory['EXTRA'].carton5L = 10;
+                storeInventory['EXTRA'].totalCartons = 60;
+                
+                storeInventory['PLUS'].carton1L = 200;
+                storeInventory['PLUS'].totalCartons = 200;
+                
+                storeInventory['DLS'].carton4L = 80;
+                storeInventory['DLS'].carton25L = 30;
+                storeInventory['DLS'].totalCartons = 110;
+                
+                storeInventory['POWER'].carton4L = 40;
+                storeInventory['POWER'].carton25L = 15;
+                storeInventory['POWER'].totalCartons = 55;
+                
+                storeInventory['ATF'].carton1L = 70;
+                storeInventory['ATF'].carton4L = 35;
+                storeInventory['ATF'].totalCartons = 105;
+                
+                storeInventory['GEAR OIL'].carton4L = 30;
+                storeInventory['GEAR OIL'].carton25L = 10;
+                storeInventory['GEAR OIL'].totalCartons = 40;
+                
+                storeInventory['HYD'].carton25L = 25;
+                storeInventory['HYD'].totalCartons = 25;
+                
+                localStorage.setItem('store_products', JSON.stringify(storeInventory));
+            }
+            
+            // Initialize pending releases from sales orders
+            syncPendingReleases();
+            
+            // Initialize stock movement if empty
+            if (stockMovement.length === 0) {
+                // Add sample stock movement
+                stockMovement = [
+                    {
+                        id: 'MOV' + Date.now(),
+                        date: '2024-04-10',
+                        product: 'SUPER',
+                        type: 'order_released',
+                        orderId: 'SO-2404101',
+                        cartonDetails: { carton1L: 20, carton4L: 10 },
+                        totalCartons: 30,
+                        releasedBy: 'Store Manager',
+                        timestamp: new Date('2024-04-10T14:30:00').toISOString()
+                    },
+                    {
+                        id: 'MOV' + Date.now() + 1,
+                        date: '2024-04-12',
+                        product: 'EXTRA',
+                        type: 'order_released',
+                        orderId: 'SO-2404121',
+                        cartonDetails: { carton1L: 15, carton5L: 5 },
+                        totalCartons: 20,
+                        releasedBy: 'Store Officer',
+                        timestamp: new Date('2024-04-12T11:15:00').toISOString()
+                    }
+                ];
+                localStorage.setItem('store_stock_movement', JSON.stringify(stockMovement));
+            }
+            
+            // Sync with sales orders to get approved orders
+            syncWithSalesOrders();
+        }
+        
+        function syncPendingReleases() {
+            // Get pending releases from accounts approval
+            const salesOrders = JSON.parse(localStorage.getItem('sales_orders') || '[]');
+            
+            // Find approved orders that need store release
+            const approvedOrders = salesOrders.filter(order => 
+                order.status === 'approved' || order.status === 'pending-release'
+            );
+            
+            // Update pending releases
+            approvedOrders.forEach(order => {
+                const existingRelease = pendingReleases.find(r => r.orderId === order.id);
+                if (!existingRelease) {
+                    pendingReleases.push({
+                        id: 'REL-' + Date.now() + Math.random().toString(36).substr(2, 5),
+                        orderId: order.id,
+                        customerName: order.customerName,
+                        approvedDate: order.orderDate,
+                        deliveryDate: order.deliveryDate,
+                        items: order.items.map(item => ({
+                            productCode: item.product,
+                            productName: item.product,
+                            orderedQty: item.totalCartons,
+                            cartonDetails: item
+                        })),
+                        totalCartons: order.totalCartons,
+                        status: 'pending',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('store_pending_releases', JSON.stringify(pendingReleases));
+        }
+        
+        function syncWithSalesOrders() {
+            const salesOrders = JSON.parse(localStorage.getItem('sales_orders') || '[]');
+            
+            // Update released orders from sales orders with delivery status
+            const deliveredOrders = salesOrders.filter(order => order.status === 'delivered');
+            
+            deliveredOrders.forEach(order => {
+                const existingReleased = releasedOrders.find(r => r.orderId === order.id);
+                if (!existingReleased) {
+                    // Check if release record exists
+                    const releaseRecord = stockMovement.find(movement => 
+                        movement.orderId === order.id
+                    );
+                    
+                    if (releaseRecord) {
+                        releasedOrders.push({
+                            orderId: order.id,
+                            customerName: order.customerName,
+                            totalCartons: order.totalCartons,
+                            releaseDate: releaseRecord.date,
+                            releasedBy: releaseRecord.releasedBy,
+                            deliveryDate: order.deliveryDate,
+                            deliveryStatus: 'delivered',
+                            items: order.items
+                        });
+                    }
+                }
+            });
+            
+            localStorage.setItem('store_released_orders', JSON.stringify(releasedOrders));
+        }
+        
+        function showPage(pageName) {
+            // Hide all pages
+            Object.values(pages).forEach(page => {
+                if (page) page.style.display = 'none';
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            if (pages[pageName]) {
+                pages[pageName].style.display = 'block';
+            }
+            
+            // Add active class to selected menu item
+            const menuItem = document.querySelector(`.menu-item[data-page="${pageName}"]`);
+            if (menuItem) {
+                menuItem.classList.add('active');
+            }
+            
+            // Update page-specific data
+            if (pageName === 'dashboard') {
+                updateDashboardStats();
+                loadRecentPendingReleases();
+            } else if (pageName === 'pending-releases') {
+                loadAllPendingReleases();
+            } else if (pageName === 'inventory') {
+                loadInventory();
+            } else if (pageName === 'released-orders') {
+                loadReleasedOrders();
+            }
+        }
+        
+        function updateDashboardStats() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Calculate pending releases count
+            const pendingCount = pendingReleases.filter(r => r.status === 'pending').length;
+            
+            // Calculate today's releases
+            const todayReleases = releasedOrders.filter(order => 
+                order.releaseDate === today
+            ).length;
+            
+            // Calculate low stock items
+            let lowStockCount = 0;
+            Object.entries(storeInventory).forEach(([productName, productData]) => {
+                const productSpec = productSpecs[productName];
+                if (productSpec) {
+                    const sizes = productSpec.availableSizes;
+                    const isLowStock = sizes.some(size => {
+                        const currentStock = productData[`carton${size}L`] || 0;
+                        const minStock = productSpec.minStock[size] || 0;
+                        return currentStock < minStock;
+                    });
+                    
+                    if (isLowStock) lowStockCount++;
+                }
+            });
+            
+            // Calculate inventory value (estimate)
+            let inventoryValue = 0;
+            const priceEstimate = {
+                'DLS': 4500, // Average price per carton
+                'PLUS': 5200,
+                'SUPER': 5800,
+                'EXTRA': 6200,
+                'POWER': 7500,
+                'ATF': 6800,
+                'GEAR OIL': 8500,
+                'HYD': 35000
+            };
+            
+            Object.entries(storeInventory).forEach(([productName, productData]) => {
+                const totalCartons = productData.totalCartons || 0;
+                const price = priceEstimate[productName] || 5000;
+                inventoryValue += totalCartons * price;
+            });
+            
+            // Update UI
+            document.getElementById('pendingReleasesCount').textContent = pendingCount;
+            document.getElementById('todayReleasesCount').textContent = todayReleases;
+            document.getElementById('lowStockCount').textContent = lowStockCount;
+            document.getElementById('inventoryValue').textContent = `₦${inventoryValue.toLocaleString()}`;
+            
+            // Update inventory page stats
+            document.getElementById('totalProductsCount').textContent = Object.keys(productSpecs).length;
+            document.getElementById('totalCartonsItems').textContent = Object.values(storeInventory)
+                .reduce((sum, product) => sum + (product.totalCartons || 0), 0)
+                .toLocaleString();
+            document.getElementById('lowStockItemsCount').textContent = lowStockCount;
+            document.getElementById('inventoryStockValue').textContent = `₦${inventoryValue.toLocaleString()}`;
+        }
+        
+        function loadRecentPendingReleases() {
+            const tableBody = document.querySelector('#recentPendingTable tbody');
+            const emptyState = document.getElementById('noPendingReleases');
+            
+            const pendingList = pendingReleases.filter(r => r.status === 'pending');
+            
+            if (pendingList.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by delivery date (earliest first) and get recent 10
+            const recentReleases = [...pendingList]
+                .sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate))
+                .slice(0, 10);
+            
+            tableBody.innerHTML = recentReleases.map(release => {
+                const approvedDate = new Date(release.approvedDate);
+                const deliveryDate = new Date(release.deliveryDate);
+                
+                const approvedFormatted = approvedDate.toLocaleDateString('en-NG', { 
+                    day: 'numeric',
+                    month: 'short'
+                });
+                
+                const deliveryFormatted = deliveryDate.toLocaleDateString('en-NG', { 
+                    day: 'numeric',
+                    month: 'short'
+                });
+                
+                // Check stock availability
+                const stockCheck = checkStockAvailability(release.items);
+                const hasInsufficientStock = stockCheck.some(item => !item.allAvailable);
+                
+                return `
+                    <tr>
+                        <td>${release.orderId}</td>
+                        <td>${release.customerName}</td>
+                        <td>${release.totalCartons}</td>
+                        <td>${deliveryFormatted} ${deliveryDate < new Date() ? '<span style="color: #dc2626;">⚠</span>' : ''}</td>
+                        <td>${approvedFormatted}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewReleaseDetails('${release.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn release" onclick="releaseOrder('${release.id}')" ${hasInsufficientStock ? 'disabled style="opacity: 0.5;"' : ''}>
+                                    <i class="fas fa-box-open"></i> Release
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function loadAllPendingReleases() {
+            const tableBody = document.querySelector('#allPendingTable tbody');
+            const emptyState = document.getElementById('noFilteredReleases');
+            const searchTerm = document.getElementById('searchReleases').value.toLowerCase();
+            const filter = document.getElementById('releaseFilter').value;
+            
+            let filteredReleases = pendingReleases.filter(r => r.status === 'pending');
+            
+            // Apply search filter
+            if (searchTerm) {
+                filteredReleases = filteredReleases.filter(release => 
+                    release.orderId.toLowerCase().includes(searchTerm) ||
+                    release.customerName.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Apply filter
+            if (filter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filteredReleases = filteredReleases.filter(release => 
+                    release.deliveryDate === today
+                );
+            } else if (filter === 'urgent') {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                
+                filteredReleases = filteredReleases.filter(release => 
+                    new Date(release.deliveryDate) <= tomorrow
+                );
+            }
+            
+            if (filteredReleases.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by delivery date (earliest first)
+            const sortedReleases = [...filteredReleases].sort((a, b) => 
+                new Date(a.deliveryDate) - new Date(b.deliveryDate)
+            );
+            
+            tableBody.innerHTML = sortedReleases.map(release => {
+                const approvedDate = new Date(release.approvedDate);
+                const deliveryDate = new Date(release.deliveryDate);
+                
+                const approvedFormatted = approvedDate.toLocaleDateString('en-NG', { 
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                const deliveryFormatted = deliveryDate.toLocaleDateString('en-NG', { 
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                // Get items summary
+                const itemsSummary = release.items.map(item => item.productName).join(', ');
+                
+                // Check stock availability
+                const stockCheck = checkStockAvailability(release.items);
+                const hasInsufficientStock = stockCheck.some(item => !item.allAvailable);
+                const stockStatus = hasInsufficientStock ? 
+                    '<span class="stock-check stock-insufficient">Stock Issue</span>' : 
+                    '<span class="stock-check stock-available">Stock OK</span>';
+                
+                return `
+                    <tr>
+                        <td>${release.orderId}</td>
+                        <td>${release.customerName}</td>
+                        <td>${itemsSummary}</td>
+                        <td>${release.totalCartons}</td>
+                        <td>${approvedFormatted}</td>
+                        <td>${deliveryFormatted} ${deliveryDate < new Date() ? '<span style="color: #dc2626;">⚠</span>' : ''}</td>
+                        <td>${stockStatus}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewReleaseDetails('${release.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn release" onclick="releaseOrder('${release.id}')" ${hasInsufficientStock ? 'disabled style="opacity: 0.5;"' : ''}>
+                                    <i class="fas fa-box-open"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function loadInventory() {
+            const inventoryGrid = document.getElementById('inventoryGrid');
+            const filter = document.getElementById('inventoryFilter').value;
+            
+            let filteredProducts = Object.entries(storeInventory);
+            
+            if (filter === 'low') {
+                filteredProducts = filteredProducts.filter(([productName, productData]) => {
+                    const productSpec = productSpecs[productName];
+                    if (!productSpec) return false;
+                    
+                    return productSpec.availableSizes.some(size => {
+                        const currentStock = productData[`carton${size}L`] || 0;
+                        const minStock = productSpec.minStock[size] || 0;
+                        return currentStock < minStock;
+                    });
+                });
+            } else if (filter === 'out') {
+                filteredProducts = filteredProducts.filter(([productName, productData]) => 
+                    productData.totalCartons === 0
+                );
+            } else if (filter === 'oil') {
+                filteredProducts = filteredProducts.filter(([productName, productData]) => 
+                    productData.category === 'Oil'
+                );
+            }
+            
+            if (filteredProducts.length === 0) {
+                inventoryGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 48px; color: var(--light-gray); margin-bottom: 16px;"></i>
+                        <h3 style="margin-bottom: 8px; color: var(--dark);">No Products Found</h3>
+                        <p style="color: var(--gray);">No products match your current filter</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            inventoryGrid.innerHTML = filteredProducts.map(([productName, productData]) => {
+                const productSpec = productSpecs[productName];
+                if (!productSpec) return '';
+                
+                const totalCartons = productData.totalCartons || 0;
+                
+                // Calculate stock status
+                let stockStatus = 'In Stock';
+                let stockClass = 'stock-ok';
+                
+                if (totalCartons === 0) {
+                    stockStatus = 'Out of Stock';
+                    stockClass = 'stock-low';
+                } else {
+                    // Check if any size is below minimum
+                    const hasLowStock = productSpec.availableSizes.some(size => {
+                        const currentStock = productData[`carton${size}L`] || 0;
+                        const minStock = productSpec.minStock[size] || 0;
+                        return currentStock < minStock;
+                    });
+                    
+                    if (hasLowStock) {
+                        stockStatus = 'Low Stock';
+                        stockClass = 'stock-low';
+                    }
+                }
+                
+                return `
+                    <div class="inventory-item">
+                        <div class="inventory-item-header">
+                            <span class="inventory-item-name">${productName}</span>
+                            <span class="${stockClass}" style="font-size: 12px; font-weight: 600;">${stockStatus}</span>
+                        </div>
+                        <div style="font-size: 14px; color: #64748b; margin-bottom: 12px;">
+                            ${productData.category}
+                        </div>
+                        
+                        <div class="carton-sizes">
+                            ${productSpec.availableSizes.map(size => {
+                                const count = productData[`carton${size}L`] || 0;
+                                const minStock = productSpec.minStock[size] || 0;
+                                const isLowStock = count < minStock;
+                                const sizeClass = isLowStock ? 'stock-low' : '';
+                                
+                                return `
+                                    <div class="carton-size-item">
+                                        <span class="carton-size-label">${size}L Cartons</span>
+                                        <span class="carton-size-count ${sizeClass}">
+                                            ${count} ${isLowStock ? `(${minStock} min)` : ''}
+                                        </span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <div class="inventory-item-stock">
+                            <span style="font-weight: 600; font-size: 24px; color: var(--store-dark);">${totalCartons}</span>
+                            <span style="color: #64748b; font-size: 14px; margin-left: 8px;">total cartons</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadReleasedOrders() {
+            const tableBody = document.querySelector('#releasedTable tbody');
+            const emptyState = document.getElementById('noReleasedOrders');
+            
+            if (releasedOrders.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by release date (newest first)
+            const sortedOrders = [...releasedOrders].sort((a, b) => 
+                new Date(b.releaseDate) - new Date(a.releaseDate)
+            );
+            
+            tableBody.innerHTML = sortedOrders.map(order => {
+                const releaseDate = new Date(order.releaseDate);
+                const deliveryDate = new Date(order.deliveryDate);
+                
+                const releaseFormatted = releaseDate.toLocaleDateString('en-NG', { 
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                const deliveryStatus = order.deliveryStatus === 'delivered' ? 
+                    '<span class="status-badge status-completed">Delivered</span>' :
+                    '<span class="status-badge status-released">Released</span>';
+                
+                return `
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${order.customerName}</td>
+                        <td>${order.totalCartons}</td>
+                        <td>${releaseFormatted}</td>
+                        <td>${order.releasedBy}</td>
+                        <td>${deliveryStatus}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewReleasedOrder('${order.orderId}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function checkStockAvailability(orderItems) {
+            const results = [];
+            
+            orderItems.forEach(item => {
+                const productName = item.productCode;
+                const productData = storeInventory[productName];
+                const productSpec = productSpecs[productName];
+                
+                if (!productData || !productSpec) {
+                    results.push({
+                        product: productName,
+                        allAvailable: false,
+                        issues: ['Product not found in inventory']
+                    });
+                    return;
+                }
+                
+                const issues = [];
+                let allAvailable = true;
+                
+                // Check each carton size
+                productSpec.availableSizes.forEach(size => {
+                    const orderedQty = item.cartonDetails[`carton${size}L`] || 0;
+                    if (orderedQty > 0) {
+                        const availableQty = productData[`carton${size}L`] || 0;
+                        
+                        if (orderedQty > availableQty) {
+                            allAvailable = false;
+                            issues.push(`${size}L: Need ${orderedQty}, Have ${availableQty}`);
+                        }
+                    }
+                });
+                
+                results.push({
+                    product: productName,
+                    allAvailable: allAvailable,
+                    issues: issues
+                });
+            });
+            
+            return results;
+        }
+        
+        function viewReleaseDetails(releaseId) {
+            const release = pendingReleases.find(r => r.id === releaseId);
+            if (!release) return;
+            
+            let details = `Release ID: ${release.id}\n`;
+            details += `Order ID: ${release.orderId}\n`;
+            details += `Customer: ${release.customerName}\n`;
+            details += `Approved Date: ${release.approvedDate}\n`;
+            details += `Delivery Date: ${release.deliveryDate}\n`;
+            details += `Total Cartons: ${release.totalCartons}\n\n`;
+            
+            details += `Items:\n`;
+            release.items.forEach((item, index) => {
+                details += `${index + 1}. ${item.productName}:\n`;
+                
+                const productSpec = productSpecs[item.productCode];
+                if (productSpec) {
+                    productSpec.availableSizes.forEach(size => {
+                        const orderedQty = item.cartonDetails[`carton${size}L`] || 0;
+                        if (orderedQty > 0) {
+                            const availableQty = storeInventory[item.productCode]?.[`carton${size}L`] || 0;
+                            const status = orderedQty <= availableQty ? '✓' : '✗';
+                            details += `   - ${size}L: ${orderedQty} cartons (Available: ${availableQty}) ${status}\n`;
+                        }
+                    });
+                }
+                details += '\n';
+            });
+            
+            alert(details);
+        }
+        
+        function releaseOrder(releaseId) {
+            const release = pendingReleases.find(r => r.id === releaseId);
+            if (!release) return;
+            
+            // Check stock availability before proceeding
+            const stockCheck = checkStockAvailability(release.items);
+            const insufficientItems = stockCheck.filter(item => !item.allAvailable);
+            
+            if (insufficientItems.length > 0) {
+                let errorMessage = 'Insufficient stock for the following items:\n\n';
+                insufficientItems.forEach(item => {
+                    errorMessage += `${item.product}:\n`;
+                    item.issues.forEach(issue => errorMessage += `  - ${issue}\n`);
+                    errorMessage += '\n';
+                });
+                errorMessage += 'Please update inventory or contact production.';
+                alert(errorMessage);
+                return;
+            }
+            
+            currentOrder = release;
+            
+            // Fill modal with release data
+            document.getElementById('modalOrderId').textContent = release.orderId;
+            document.getElementById('modalCustomer').textContent = release.customerName;
+            document.getElementById('modalApprovedDate').textContent = formatDate(release.approvedDate);
+            document.getElementById('modalDeliveryDate').textContent = formatDate(release.deliveryDate);
+            document.getElementById('modalTotalCartons').textContent = release.totalCartons;
+            
+            // Load order items
+            const itemsTable = document.getElementById('modalOrderItems').querySelector('tbody');
+            itemsTable.innerHTML = release.items.map(item => {
+                const productSpec = productSpecs[item.productCode];
+                const sizes = productSpec?.availableSizes || [];
+                
+                // Build size details
+                const sizeDetails = sizes
+                    .map(size => {
+                        const orderedQty = item.cartonDetails[`carton${size}L`] || 0;
+                        if (orderedQty > 0) {
+                            const availableQty = storeInventory[item.productCode]?.[`carton${size}L`] || 0;
+                            const status = orderedQty <= availableQty ? '✓' : '✗';
+                            return `${orderedQty}×${size}L (${availableQty} available)`;
+                        }
+                        return null;
+                    })
+                    .filter(Boolean)
+                    .join(', ');
+                
+                return `
+                    <tr>
+                        <td>${item.productName}</td>
+                        <td>${sizeDetails}</td>
+                        <td><span class="stock-check stock-available">Available</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Show stock check result
+            const stockResult = document.getElementById('stockCheckResult');
+            stockResult.innerHTML = `
+                <div class="order-details" style="background-color: #d1fae5;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: var(--store-dark);">
+                        <i class="fas fa-check-circle"></i> Stock Check Complete
+                    </div>
+                    <div style="font-size: 14px; color: #065f46;">
+                        All items are available in stock. Ready for release.
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('releaseModal').style.display = 'flex';
+        }
+        
+        function processRelease() {
+            const releaseDate = document.getElementById('releaseDate').value;
+            const releasedBy = document.getElementById('releasedBy').value;
+            const releaseNotes = document.getElementById('releaseNotes').value;
+            
+            if (!releaseDate || !releasedBy) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (!currentOrder) return;
+            
+            // Deduct stock from inventory
+            currentOrder.items.forEach(item => {
+                const productName = item.productCode;
+                const productData = storeInventory[productName];
+                
+                if (productData) {
+                    const productSpec = productSpecs[productName];
+                    productSpec.availableSizes.forEach(size => {
+                        const orderedQty = item.cartonDetails[`carton${size}L`] || 0;
+                        if (orderedQty > 0) {
+                            const currentStock = productData[`carton${size}L`] || 0;
+                            productData[`carton${size}L`] = currentStock - orderedQty;
+                            
+                            // Add to stock movement
+                            stockMovement.push({
+                                id: 'MOV' + Date.now() + Math.random().toString(36).substr(2, 5),
+                                date: releaseDate,
+                                product: productName,
+                                type: 'order_released',
+                                orderId: currentOrder.orderId,
+                                cartonDetails: { [`carton${size}L`]: orderedQty },
+                                totalCartons: orderedQty,
+                                releasedBy: releasedBy,
+                                notes: releaseNotes,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    });
+                    
+                    // Update total cartons
+                    productData.totalCartons = productSpec.availableSizes.reduce((sum, size) => 
+                        sum + (productData[`carton${size}L`] || 0), 0
+                    );
+                }
+            });
+            
+            // Update pending release status
+            const releaseIndex = pendingReleases.findIndex(r => r.id === currentOrder.id);
+            if (releaseIndex !== -1) {
+                pendingReleases[releaseIndex].status = 'released';
+                pendingReleases[releaseIndex].releaseDate = releaseDate;
+                pendingReleases[releaseIndex].releasedBy = releasedBy;
+                pendingReleases[releaseIndex].releaseNotes = releaseNotes;
+            }
+            
+            // Add to released orders
+            releasedOrders.push({
+                orderId: currentOrder.orderId,
+                customerName: currentOrder.customerName,
+                totalCartons: currentOrder.totalCartons,
+                releaseDate: releaseDate,
+                releasedBy: releasedBy,
+                releaseNotes: releaseNotes,
+                deliveryDate: currentOrder.deliveryDate,
+                deliveryStatus: 'released',
+                items: currentOrder.items
+            });
+            
+            // Update sales order status
+            const salesOrders = JSON.parse(localStorage.getItem('sales_orders') || '[]');
+            const orderIndex = salesOrders.findIndex(o => o.id === currentOrder.orderId);
+            if (orderIndex !== -1) {
+                salesOrders[orderIndex].status = 'pending-release';
+                salesOrders[orderIndex].workflow[2].status = 'completed';
+                salesOrders[orderIndex].workflow[2].date = releaseDate;
+                salesOrders[orderIndex].workflow[2].user = releasedBy;
+                localStorage.setItem('sales_orders', JSON.stringify(salesOrders));
+            }
+            
+            // Save all data
+            localStorage.setItem('store_products', JSON.stringify(storeInventory));
+            localStorage.setItem('store_stock_movement', JSON.stringify(stockMovement));
+            localStorage.setItem('store_pending_releases', JSON.stringify(pendingReleases));
+            localStorage.setItem('store_released_orders', JSON.stringify(releasedOrders));
+            
+            // Close modal
+            document.getElementById('releaseModal').style.display = 'none';
+            
+            // Reset form
+            document.getElementById('releaseForm').reset();
+            document.getElementById('releaseDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('releasedBy').value = JSON.parse(localStorage.getItem('store_user') || '{}').name || '';
+            
+            // Show success message
+            alert(`Order ${currentOrder.orderId} released successfully!\n\nReleased Date: ${releaseDate}\nReleased By: ${releasedBy}\nTotal Cartons: ${currentOrder.totalCartons}`);
+            
+            // Update UI
+            updateDashboardStats();
+            loadRecentPendingReleases();
+            if (document.getElementById('pending-releasesPage').style.display !== 'none') {
+                loadAllPendingReleases();
+            }
+            if (document.getElementById('inventoryPage').style.display !== 'none') {
+                loadInventory();
+            }
+            
+            currentOrder = null;
+        }
+        
+        function viewReleasedOrder(orderId) {
+            const order = releasedOrders.find(o => o.orderId === orderId);
+            if (!order) return;
+            
+            let details = `Order ID: ${order.orderId}\n`;
+            details += `Customer: ${order.customerName}\n`;
+            details += `Release Date: ${order.releaseDate}\n`;
+            details += `Released By: ${order.releasedBy}\n`;
+            details += `Delivery Date: ${order.deliveryDate}\n`;
+            details += `Delivery Status: ${order.deliveryStatus}\n`;
+            details += `Total Cartons: ${order.totalCartons}\n`;
+            
+            if (order.releaseNotes) {
+                details += `Release Notes: ${order.releaseNotes}\n`;
+            }
+            
+            details += `\nItems Released:\n`;
+            order.items.forEach((item, index) => {
+                details += `${index + 1}. ${item.productName}:\n`;
+                
+                const productSpec = productSpecs[item.productCode];
+                if (productSpec) {
+                    productSpec.availableSizes.forEach(size => {
+                        const releasedQty = item.cartonDetails[`carton${size}L`] || 0;
+                        if (releasedQty > 0) {
+                            details += `   - ${size}L: ${releasedQty} cartons\n`;
+                        }
+                    });
+                }
+                details += '\n';
+            });
+            
+            alert(details);
+        }
+        
+        function refreshInventory() {
+            // Sync with production department (in real app, this would fetch from production API)
+            const productionLogs = JSON.parse(localStorage.getItem('production_logs') || '[]');
+            
+            // Process new production logs
+            productionLogs.forEach(log => {
+                const existingMovement = stockMovement.find(movement => 
+                    movement.timestamp === log.timestamp
+                );
+                
+                if (!existingMovement) {
+                    // Add stock from production
+                    const productName = log.product;
+                    const productData = storeInventory[productName];
+                    
+                    if (productData) {
+                        // Add cartons to inventory
+                        const productSpec = productSpecs[productName];
+                        productSpec?.availableSizes.forEach(size => {
+                            const producedQty = log[`carton${size}L`] || 0;
+                            if (producedQty > 0) {
+                                const currentStock = productData[`carton${size}L`] || 0;
+                                productData[`carton${size}L`] = currentStock + producedQty;
+                            }
+                        });
+                        
+                        // Update total cartons
+                        productData.totalCartons = productSpec?.availableSizes.reduce((sum, size) => 
+                            sum + (productData[`carton${size}L`] || 0), 0
+                        ) || 0;
+                        
+                        // Add to stock movement
+                        stockMovement.push({
+                            id: 'MOV' + Date.now() + Math.random().toString(36).substr(2, 5),
+                            date: log.date,
+                            product: productName,
+                            type: 'production_received',
+                            operatorName: log.operatorName,
+                            cartonDetails: getCartonDetails(log),
+                            totalCartons: log.totalCartons,
+                            timestamp: log.timestamp
+                        });
+                    }
+                }
+            });
+            
+            // Sync pending releases
+            syncPendingReleases();
+            
+            // Save data
+            localStorage.setItem('store_products', JSON.stringify(storeInventory));
+            localStorage.setItem('store_stock_movement', JSON.stringify(stockMovement));
+            
+            // Update all displays
+            updateDashboardStats();
+            loadRecentPendingReleases();
+            loadInventory();
+            
+            alert('Inventory refreshed successfully! Synced with production and pending releases.');
+        }
+        
+        function getCartonDetails(log) {
+            const details = {};
+            const sizes = productSpecs[log.product]?.availableSizes || [];
+            
+            sizes.forEach(size => {
+                details[`carton${size}L`] = log[`carton${size}L`] || 0;
+            });
+            
+            return details;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-NG', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+        
+        function setupEventListeners() {
+            // Sidebar menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const pageName = this.dataset.page;
+                    showPage(pageName);
+                });
+            });
+            
+            // Dashboard buttons
+            document.getElementById('viewAllReleasesBtn').addEventListener('click', () => showPage('pending-releases'));
+            document.getElementById('quickReleaseBtn').addEventListener('click', function() {
+                showPage('pending-releases');
+            });
+            
+            // Pending releases page
+            document.getElementById('searchReleases').addEventListener('input', loadAllPendingReleases);
+            document.getElementById('releaseFilter').addEventListener('change', loadAllPendingReleases);
+            
+            // Inventory page
+            document.getElementById('inventoryFilter').addEventListener('change', loadInventory);
+            document.getElementById('refreshInventoryBtn').addEventListener('click', refreshInventory);
+            document.getElementById('printInventoryBtn').addEventListener('click', function() {
+                alert('Print functionality would be implemented in production.');
+            });
+            
+            // Released orders page
+            document.getElementById('filterReleasedBtn').addEventListener('click', loadReleasedOrders);
+            
+            // Modal buttons
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('releaseModal').style.display = 'none';
+                currentOrder = null;
+            });
+            
+            document.getElementById('cancelReleaseBtn').addEventListener('click', function() {
+                document.getElementById('releaseModal').style.display = 'none';
+                currentOrder = null;
+            });
+            
+            // Release form
+            document.getElementById('releaseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                processRelease();
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('releaseModal');
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    currentOrder = null;
+                }
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('store_authenticated');
+                    localStorage.removeItem('store_user');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

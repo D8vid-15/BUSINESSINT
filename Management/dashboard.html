@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard | Business Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --management-color: #6366f1;
+            --management-dark: #4f46e5;
+            --management-light: #e0e7ff;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            color: var(--management-color);
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--dark);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-details {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .logout-btn {
+            padding: 8px 16px;
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: calc(100vh - 68px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid var(--light-gray);
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 0 24px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            flex: 1;
+        }
+        
+        .menu-item {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            font-size: 14px;
+            color: var(--dark);
+        }
+        
+        .menu-item:hover {
+            background-color: var(--management-light);
+        }
+        
+        .menu-item.active {
+            background-color: var(--management-light);
+            border-left-color: var(--management-color);
+            color: var(--management-color);
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 32px;
+            min-width: 0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 24px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: var(--management-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--management-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
+        }
+        
+        .stat-card h3 {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+        
+        .stat-card .subtext {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Tables */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-gray);
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        thead {
+            background-color: #f8fafc;
+        }
+        
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--light-gray);
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--light-gray);
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-draft {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-pending {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-released {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .status-completed {
+            background-color: var(--management-color);
+            color: white;
+        }
+        
+        .priority-high {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .priority-medium {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .priority-low {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            background: none;
+        }
+        
+        .action-btn.view {
+            background-color: var(--management-light);
+            color: var(--management-color);
+            border-color: var(--management-color);
+        }
+        
+        .action-btn.view:hover {
+            background-color: var(--management-color);
+            color: white;
+        }
+        
+        .action-btn.timeline {
+            background-color: #f0f9ff;
+            color: #0ea5e9;
+            border-color: #0ea5e9;
+        }
+        
+        .action-btn.timeline:hover {
+            background-color: #0ea5e9;
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--light-gray);
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        /* Order Timeline Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .order-summary {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+        
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--light-gray);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding-left: 60px;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timeline-marker.completed {
+            border-color: var(--success);
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .timeline-marker.in-progress {
+            border-color: var(--management-color);
+            background-color: white;
+        }
+        
+        .timeline-marker.pending {
+            border-color: var(--light-gray);
+            background-color: white;
+        }
+        
+        .timeline-content {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 16px;
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .timeline-details {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Charts & Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .metric-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--management-color);
+        }
+        
+        .metric-chart {
+            height: 60px;
+            margin-top: 12px;
+        }
+        
+        /* Department Overview */
+        .department-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .department-card {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .department-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--management-light);
+            color: var(--management-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+        
+        .department-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .department-stats {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 0;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--light-gray);
+            }
+            
+            .sidebar-header {
+                display: none;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                flex: 1;
+                padding: 0;
+            }
+            
+            .menu-item {
+                padding: 16px 20px;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+                white-space: nowrap;
+            }
+            
+            .menu-item.active {
+                border-left: none;
+                border-bottom-color: var(--management-color);
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .department-overview {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .department-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                <i class="fas fa-chart-line logo-icon"></i>
+                <span class="logo-text">Management Dashboard</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Management User</div>
+                    <div class="user-role">Management Department</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Management Portal</div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </li>
+                <li class="menu-item" data-page="all-orders">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>All Orders</span>
+                </li>
+                <li class="menu-item" data-page="financial">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Financial</span>
+                </li>
+                <li class="menu-item" data-page="production-status">
+                    <i class="fas fa-industry"></i>
+                    <span>Production Status</span>
+                </li>
+                <li class="menu-item" data-page="inventory-status">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Inventory Status</span>
+                </li>
+                <li class="menu-item" data-page="reports">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content">
+                <div class="dashboard-header">
+                    <h1>Executive Overview</h1>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="refreshDashboardBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <div class="value" id="totalRevenue">₦0</div>
+                        <div class="subtext">Month to date</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Pending Orders</h3>
+                        <div class="value" id="pendingOrdersCount">0</div>
+                        <div class="subtext">Awaiting processing</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Production Efficiency</h3>
+                        <div class="value" id="productionEfficiency">0%</div>
+                        <div class="subtext">This week</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Inventory Value</h3>
+                        <div class="value" id="inventoryValue">₦0</div>
+                        <div class="subtext">Current stock</div>
+                    </div>
+                </div>
+                
+                <!-- Department Overview -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Department Status</h2>
+                    </div>
+                    
+                    <div class="department-overview">
+                        <div class="department-card">
+                            <div class="department-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="department-name">Sales</div>
+                            <div class="department-stats">
+                                <div>Orders: <strong id="salesOrdersCount">0</strong></div>
+                                <div>Pending: <strong id="salesPendingCount">0</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div class="department-card">
+                            <div class="department-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div class="department-name">Accounts</div>
+                            <div class="department-stats">
+                                <div>Pending Payments: <strong id="accountsPendingCount">0</strong></div>
+                                <div>Approved Today: <strong id="accountsApprovedCount">0</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div class="department-card">
+                            <div class="department-icon">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <div class="department-name">Production</div>
+                            <div class="department-stats">
+                                <div>Active Orders: <strong id="productionActiveCount">0</strong></div>
+                                <div>Today's Output: <strong id="productionOutput">0</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div class="department-card">
+                            <div class="department-icon">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <div class="department-name">Store</div>
+                            <div class="department-stats">
+                                <div>Pending Releases: <strong id="storePendingCount">0</strong></div>
+                                <div>Low Stock Items: <strong id="storeLowStockCount">0</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Orders</h2>
+                        <button class="btn btn-secondary" id="viewAllOrdersBtn">
+                            View All
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="recentOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Department</th>
+                                    <th>Last Update</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Orders will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="noOrders" style="display: none;">
+                        <i class="fas fa-file-invoice"></i>
+                        <h3>No Orders Found</h3>
+                        <p>No recent orders to display</p>
+                    </div>
+                </div>
+                
+                <!-- Key Metrics -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Key Performance Indicators</h2>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Order Fulfillment Rate</div>
+                                <div class="metric-value" id="fulfillmentRate">0%</div>
+                            </div>
+                            <div class="metric-chart">
+                                <!-- Chart placeholder -->
+                                <div style="height: 100%; background: linear-gradient(90deg, var(--management-color) 85%, var(--light-gray) 15%); border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Average Order Value</div>
+                                <div class="metric-value" id="avgOrderValue">₦0</div>
+                            </div>
+                            <div class="metric-chart">
+                                <!-- Chart placeholder -->
+                                <div style="height: 100%; background: linear-gradient(90deg, var(--success) 72%, var(--light-gray) 28%); border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Payment Collection</div>
+                                <div class="metric-value" id="paymentCollection">0%</div>
+                            </div>
+                            <div class="metric-chart">
+                                <!-- Chart placeholder -->
+                                <div style="height: 100%; background: linear-gradient(90deg, var(--warning) 68%, var(--light-gray) 32%); border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Orders Page -->
+            <div id="all-ordersPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>All Orders</h1>
+                    <div>
+                        <select class="form-control" id="ordersFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Orders</option>
+                            <option value="draft">Draft</option>
+                            <option value="pending">Pending Payment</option>
+                            <option value="approved">Approved</option>
+                            <option value="released">Released</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select class="form-control" id="timeFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="table-container">
+                        <table id="allOrdersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Department Status</th>
+                                    <th>Timeline</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- All orders will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="noFilteredOrders" style="display: none;">
+                        <i class="fas fa-search"></i>
+                        <h3>No Orders Found</h3>
+                        <p>No orders match your current filter</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Page -->
+            <div id="financialPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Financial Overview</h1>
+                    <div>
+                        <select class="form-control" id="financialPeriod" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Total Revenue</h3>
+                        <div class="value">₦8,450,000</div>
+                        <div class="subtext" style="color: var(--success);">+12% from last month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Pending Payments</h3>
+                        <div class="value">₦1,235,000</div>
+                        <div class="subtext">Awaiting collection</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Average Collection Days</h3>
+                        <div class="value">14.5</div>
+                        <div class="subtext" style="color: var(--success);">-2 days from last month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Profit Margin</h3>
+                        <div class="value">32.4%</div>
+                        <div class="subtext" style="color: var(--success);">+1.2% from last month</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="empty-state">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>Financial Reports</h3>
+                        <p>Financial reports and analytics will be displayed here</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Includes revenue trends, expense analysis, and profitability metrics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Production Status Page -->
+            <div id="production-statusPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Production Status</h1>
+                    <div>
+                        <select class="form-control" id="productionFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="empty-state">
+                        <i class="fas fa-industry"></i>
+                        <h3>Production Status</h3>
+                        <p>Production status and metrics will be displayed here</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Includes production efficiency, quality control metrics, and output analysis</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inventory Status Page -->
+            <div id="inventory-statusPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Inventory Status</h1>
+                    <div>
+                        <select class="form-control" id="inventoryFilter" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="all">All Items</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                            <option value="oil">Oil Products</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="empty-state">
+                        <i class="fas fa-warehouse"></i>
+                        <h3>Inventory Status</h3>
+                        <p>Inventory status and stock levels will be displayed here</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Includes stock value, turnover rates, and reorder recommendations</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reports/Analytics Page -->
+            <div id="reportsPage" class="page-content" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Analytics & Reports</h1>
+                    <div>
+                        <select class="form-control" id="analyticsType" style="width: auto; display: inline-block; margin-right: 12px;">
+                            <option value="sales">Sales Analytics</option>
+                            <option value="production">Production Analytics</option>
+                            <option value="inventory">Inventory Analytics</option>
+                            <option value="financial">Financial Analytics</option>
+                        </select>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Business Analytics</h3>
+                        <p>Comprehensive business analytics and reports will be displayed here</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Includes trend analysis, performance metrics, and predictive insights</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Order Timeline Modal -->
+    <div class="modal" id="timelineModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Order Timeline - <span id="modalOrderId">-</span></h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="order-summary">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-label">Customer</div>
+                            <div class="summary-value" id="modalCustomer">-</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Order Amount</div>
+                            <div class="summary-value" id="modalOrderAmount">₦0</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Order Date</div>
+                            <div class="summary-value" id="modalOrderDate">-</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Current Status</div>
+                            <div class="summary-value">
+                                <span id="modalOrderStatus" class="status-badge">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 20px;">Order Progress Timeline</h3>
+                
+                <div class="timeline" id="orderTimeline">
+                    <!-- Timeline items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Management data aggregation
+        let allOrders = [];
+        let departmentStats = {
+            sales: { orders: 0, pending: 0 },
+            accounts: { pendingPayments: 0, approvedToday: 0 },
+            production: { activeOrders: 0, todayOutput: 0 },
+            store: { pendingReleases: 0, lowStock: 0 }
+        };
+        
+        // DOM Elements
+        const pages = {
+            dashboard: document.getElementById('dashboardPage'),
+            'all-orders': document.getElementById('all-ordersPage'),
+            financial: document.getElementById('financialPage'),
+            'production-status': document.getElementById('production-statusPage'),
+            'inventory-status': document.getElementById('inventory-statusPage'),
+            reports: document.getElementById('reportsPage')
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const isAuthenticated = localStorage.getItem('management_authenticated');
+            if (!isAuthenticated) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user data
+            const userData = JSON.parse(localStorage.getItem('management_user') || '{}');
+            if (userData.name) {
+                document.getElementById('userName').textContent = userData.name;
+            }
+            
+            // Load data from all departments
+            loadAllData();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load initial view
+            showPage('dashboard');
+            updateDashboard();
+        });
+        
+        function loadAllData() {
+            // Load data from all departments
+            const salesOrders = JSON.parse(localStorage.getItem('sales_orders') || '[]');
+            const accountsPending = JSON.parse(localStorage.getItem('accounts_pending_payments') || '[]');
+            const accountsApproved = JSON.parse(localStorage.getItem('accounts_approved_payments') || '[]');
+            const productionOrders = JSON.parse(localStorage.getItem('production_orders') || '[]');
+            const productionLogs = JSON.parse(localStorage.getItem('production_logs') || '[]');
+            const storePending = JSON.parse(localStorage.getItem('store_pending_releases') || '[]');
+            const storeProducts = JSON.parse(localStorage.getItem('store_products') || '[]');
+            
+            // Aggregate all orders
+            allOrders = [...salesOrders];
+            
+            // Calculate department stats
+            departmentStats.sales.orders = salesOrders.length;
+            departmentStats.sales.pending = salesOrders.filter(o => o.status === 'pending').length;
+            
+            departmentStats.accounts.pendingPayments = accountsPending.length;
+            const today = new Date().toISOString().split('T')[0];
+            departmentStats.accounts.approvedToday = accountsApproved.filter(p => 
+                new Date(p.approvalDate).toISOString().split('T')[0] === today
+            ).length;
+            
+            departmentStats.production.activeOrders = productionOrders.filter(o => 
+                o.status === 'in-progress' || o.status === 'pending'
+            ).length;
+            departmentStats.production.todayOutput = productionLogs.filter(log => {
+                const logDate = new Date(log.endTime).toISOString().split('T')[0];
+                return logDate === today;
+            }).reduce((sum, log) => sum + (log.actualQuantity || 0), 0);
+            
+            departmentStats.store.pendingReleases = storePending.length;
+            departmentStats.store.lowStock = storeProducts.filter(p => 
+                p.stock < (p.minStock || 10)
+            ).length;
+        }
+        
+        function showPage(pageName) {
+            // Hide all pages
+            Object.values(pages).forEach(page => {
+                if (page) page.style.display = 'none';
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            if (pages[pageName]) {
+                pages[pageName].style.display = 'block';
+            }
+            
+            // Add active class to selected menu item
+            const menuItem = document.querySelector(`.menu-item[data-page="${pageName}"]`);
+            if (menuItem) {
+                menuItem.classList.add('active');
+            }
+            
+            // Update page-specific data
+            if (pageName === 'dashboard') {
+                updateDashboard();
+            } else if (pageName === 'all-orders') {
+                loadAllOrders();
+            }
+        }
+        
+        function updateDashboard() {
+            // Update department stats
+            document.getElementById('salesOrdersCount').textContent = departmentStats.sales.orders;
+            document.getElementById('salesPendingCount').textContent = departmentStats.sales.pending;
+            document.getElementById('accountsPendingCount').textContent = departmentStats.accounts.pendingPayments;
+            document.getElementById('accountsApprovedCount').textContent = departmentStats.accounts.approvedToday;
+            document.getElementById('productionActiveCount').textContent = departmentStats.production.activeOrders;
+            document.getElementById('productionOutput').textContent = departmentStats.production.todayOutput;
+            document.getElementById('storePendingCount').textContent = departmentStats.store.pendingReleases;
+            document.getElementById('storeLowStockCount').textContent = departmentStats.store.lowStock;
+            
+            // Calculate main stats
+            const totalRevenue = allOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+            const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
+            const productionEfficiency = '92%';
+            const inventoryValue = 0; // Would be calculated from store data
+            
+            // Update main stats
+            document.getElementById('totalRevenue').textContent = `₦${totalRevenue.toLocaleString()}`;
+            document.getElementById('pendingOrdersCount').textContent = pendingOrders;
+            document.getElementById('productionEfficiency').textContent = productionEfficiency;
+            document.getElementById('inventoryValue').textContent = `₦${inventoryValue.toLocaleString()}`;
+            
+            // Update KPIs
+            document.getElementById('fulfillmentRate').textContent = '85%';
+            document.getElementById('avgOrderValue').textContent = `₦${(totalRevenue / Math.max(allOrders.length, 1)).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('paymentCollection').textContent = '78%';
+            
+            // Load recent orders
+            loadRecentOrders();
+        }
+        
+        function loadRecentOrders() {
+            const tableBody = document.querySelector('#recentOrdersTable tbody');
+            const emptyState = document.getElementById('noOrders');
+            
+            if (allOrders.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by date (newest first)
+            const sortedOrders = [...allOrders].sort((a, b) => 
+                new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)
+            ).slice(0, 10);
+            
+            tableBody.innerHTML = sortedOrders.map(order => {
+                const statusClass = order.status === 'draft' ? 'status-draft' :
+                                  order.status === 'pending' ? 'status-pending' :
+                                  order.status === 'approved' ? 'status-approved' :
+                                  order.status === 'released' ? 'status-released' :
+                                  order.status === 'completed' ? 'status-completed' : 'status-pending';
+                const statusText = order.status === 'draft' ? 'Draft' :
+                                 order.status === 'pending' ? 'Pending Payment' :
+                                 order.status === 'approved' ? 'Approved' :
+                                 order.status === 'released' ? 'Released' :
+                                 order.status === 'completed' ? 'Completed' : 'Pending';
+                
+                // Determine current department
+                let currentDepartment = 'Sales';
+                if (order.status === 'approved' || order.status === 'released' || order.status === 'completed') {
+                    currentDepartment = 'Store';
+                } else if (order.status === 'pending') {
+                    currentDepartment = 'Accounts';
+                }
+                
+                const lastUpdate = order.updatedAt || order.createdAt || order.date;
+                
+                return `
+                    <tr>
+                        <td>${order.id || order.orderId}</td>
+                        <td>${order.customerName || order.customer}</td>
+                        <td>₦${(order.total || order.amount || 0).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${currentDepartment}</td>
+                        <td>${formatDate(lastUpdate)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewOrderDetails('${order.id || order.orderId}')">View</button>
+                                <button class="action-btn timeline" onclick="showOrderTimeline('${order.id || order.orderId}')">Timeline</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function loadAllOrders() {
+            const tableBody = document.querySelector('#allOrdersTable tbody');
+            const emptyState = document.getElementById('noFilteredOrders');
+            const statusFilter = document.getElementById('ordersFilter').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+            
+            let filteredOrders = allOrders;
+            
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+            }
+            
+            // Apply time filter
+            const now = new Date();
+            if (timeFilter === 'today') {
+                const today = now.toISOString().split('T')[0];
+                filteredOrders = filteredOrders.filter(order => {
+                    const orderDate = new Date(order.createdAt || order.date).toISOString().split('T')[0];
+                    return orderDate === today;
+                });
+            } else if (timeFilter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filteredOrders = filteredOrders.filter(order => 
+                    new Date(order.createdAt || order.date) >= weekAgo
+                );
+            } else if (timeFilter === 'month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filteredOrders = filteredOrders.filter(order => 
+                    new Date(order.createdAt || order.date) >= monthAgo
+                );
+            }
+            
+            if (filteredOrders.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by date (newest first)
+            const sortedOrders = [...filteredOrders].sort((a, b) => 
+                new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)
+            );
+            
+            tableBody.innerHTML = sortedOrders.map(order => {
+                const statusClass = order.status === 'draft' ? 'status-draft' :
+                                  order.status === 'pending' ? 'status-pending' :
+                                  order.status === 'approved' ? 'status-approved' :
+                                  order.status === 'released' ? 'status-released' :
+                                  order.status === 'completed' ? 'status-completed' : 'status-pending';
+                const statusText = order.status === 'draft' ? 'Draft' :
+                                 order.status === 'pending' ? 'Pending Payment' :
+                                 order.status === 'approved' ? 'Approved' :
+                                 order.status === 'released' ? 'Released' :
+                                 order.status === 'completed' ? 'Completed' : 'Pending';
+                
+                // Determine department status
+                let deptStatus = '';
+                if (order.status === 'draft') {
+                    deptStatus = 'Sales (Draft)';
+                } else if (order.status === 'pending') {
+                    deptStatus = 'Accounts (Awaiting Payment)';
+                } else if (order.status === 'approved') {
+                    deptStatus = 'Store (Pending Release)';
+                } else if (order.status === 'released') {
+                    deptStatus = 'Store (Released)';
+                } else if (order.status === 'completed') {
+                    deptStatus = 'Completed';
+                }
+                
+                return `
+                    <tr>
+                        <td>${order.id || order.orderId}</td>
+                        <td>${order.customerName || order.customer}</td>
+                        <td>${formatDate(order.createdAt || order.date)}</td>
+                        <td>₦${(order.total || order.amount || 0).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${deptStatus}</td>
+                        <td>
+                            <button class="action-btn timeline" onclick="showOrderTimeline('${order.id || order.orderId}')">View Timeline</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function viewOrderDetails(orderId) {
+            const order = allOrders.find(o => o.id === orderId || o.orderId === orderId);
+            if (!order) return;
+            
+            alert(`Order Details:\nID: ${order.id || order.orderId}\nCustomer: ${order.customerName || order.customer}\nAmount: ₦${(order.total || order.amount || 0).toLocaleString()}\nStatus: ${order.status}`);
+        }
+        
+        function showOrderTimeline(orderId) {
+            const order = allOrders.find(o => o.id === orderId || o.orderId === orderId);
+            if (!order) return;
+            
+            // Fill modal with order data
+            document.getElementById('modalOrderId').textContent = order.id || order.orderId;
+            document.getElementById('modalCustomer').textContent = order.customerName || order.customer;
+            document.getElementById('modalOrderAmount').textContent = `₦${(order.total || order.amount || 0).toLocaleString()}`;
+            document.getElementById('modalOrderDate').textContent = formatDate(order.createdAt || order.date);
+            
+            // Set status badge
+            const statusBadge = document.getElementById('modalOrderStatus');
+            const statusClass = order.status === 'draft' ? 'status-draft' :
+                              order.status === 'pending' ? 'status-pending' :
+                              order.status === 'approved' ? 'status-approved' :
+                              order.status === 'released' ? 'status-released' :
+                              order.status === 'completed' ? 'status-completed' : 'status-pending';
+            const statusText = order.status === 'draft' ? 'Draft' :
+                             order.status === 'pending' ? 'Pending Payment' :
+                             order.status === 'approved' ? 'Approved' :
+                             order.status === 'released' ? 'Released' :
+                             order.status === 'completed' ? 'Completed' : 'Pending';
+            
+            statusBadge.textContent = statusText;
+            statusBadge.className = `status-badge ${statusClass}`;
+            
+            // Create timeline
+            const timeline = document.getElementById('orderTimeline');
+            const now = new Date();
+            const orderDate = new Date(order.createdAt || order.date);
+            
+            // Determine timeline items based on order status
+            const timelineItems = [
+                {
+                    title: 'Sales Created Order',
+                    time: orderDate,
+                    completed: true,
+                    details: `By: ${order.salesPerson || 'Sales Department'}`,
+                    icon: 'fa-shopping-cart'
+                },
+                {
+                    title: 'Payment Confirmation',
+                    time: order.status === 'pending' ? null : new Date(orderDate.getTime() + 2 * 60 * 60 * 1000),
+                    completed: order.status !== 'draft' && order.status !== 'pending',
+                    details: order.status === 'pending' ? 'Pending (Accounts Department)' : `By: Accounts Department`,
+                    icon: 'fa-file-invoice-dollar'
+                },
+                {
+                    title: 'Stock Release',
+                    time: order.status === 'released' || order.status === 'completed' ? new Date(orderDate.getTime() + 4 * 60 * 60 * 1000) : null,
+                    completed: order.status === 'released' || order.status === 'completed',
+                    details: order.status === 'released' || order.status === 'completed' ? 'Released by Store Department' : 'Pending (Store Department)',
+                    icon: 'fa-warehouse'
+                },
+                {
+                    title: 'Order Completed',
+                    time: order.status === 'completed' ? new Date(orderDate.getTime() + 6 * 60 * 60 * 1000) : null,
+                    completed: order.status === 'completed',
+                    details: order.status === 'completed' ? 'Order fulfilled and delivered' : 'Pending completion',
+                    icon: 'fa-check-circle'
+                }
+            ];
+            
+            timeline.innerHTML = timelineItems.map((item, index) => {
+                const markerClass = item.completed ? 'completed' : 
+                                  item.time ? 'in-progress' : 'pending';
+                
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-marker ${markerClass}">
+                            <i class="fas ${item.icon}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <div class="timeline-title">${item.title}</div>
+                                <div class="timeline-time">
+                                    ${item.time ? formatDateTime(item.time) : 'Pending'}
+                                </div>
+                            </div>
+                            <div class="timeline-details">${item.details}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Show modal
+            document.getElementById('timelineModal').style.display = 'flex';
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-NG', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+        
+        function formatDateTime(date) {
+            return date.toLocaleString('en-NG', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+        
+        function setupEventListeners() {
+            // Sidebar menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const pageName = this.dataset.page;
+                    showPage(pageName);
+                });
+            });
+            
+            // Dashboard buttons
+            document.getElementById('refreshDashboardBtn').addEventListener('click', function() {
+                loadAllData();
+                updateDashboard();
+                alert('Dashboard data refreshed.');
+            });
+            
+            document.getElementById('viewAllOrdersBtn').addEventListener('click', () => showPage('all-orders'));
+            
+            // All orders page
+            document.getElementById('ordersFilter').addEventListener('change', loadAllOrders);
+            document.getElementById('timeFilter').addEventListener('change', loadAllOrders);
+            
+            // Modal buttons
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('timelineModal').style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('timelineModal');
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('management_authenticated');
+                    localStorage.removeItem('management_user');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

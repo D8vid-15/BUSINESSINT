@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Login | Business Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --store-color: #f59e0b;
+            --store-dark: #d97706;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--store-color) 0%, var(--store-dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .company-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .company-logo i {
+            font-size: 32px;
+        }
+        
+        .company-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .department-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .login-form {
+            padding: 40px 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            background-color: #ffffff;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--store-color);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--store-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--store-dark);
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding: 20px 30px;
+            border-top: 1px solid var(--light-gray);
+            background-color: #f8fafc;
+        }
+        
+        .department-switch {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .department-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .dept-link {
+            color: var(--store-color);
+            text-decoration: none;
+            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .dept-link:hover {
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .login-header {
+                padding: 30px 20px;
+            }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
+            
+            .company-logo h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="company-logo">
+                    <i class="fas fa-warehouse"></i>
+                    <h1>Business System</h1>
+                </div>
+                <p>Internal Management System</p>
+                <div class="department-badge">Store Department</div>
+            </div>
+            
+            <form class="login-form" id="storeLoginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <span id="btnText">Login to Store Portal</span>
+                        <div id="btnLoading" class="loading" style="display: none; margin: 0 auto;"></div>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="login-footer">
+                <div class="department-switch">
+                    <p>Access other departments:</p>
+                    <div class="department-links">
+                        <a href="../sales/login.html" class="dept-link">Sales</a>
+                        <a href="../Production/login.html" class="dept-link">Production</a>
+                        <a href="../Accounts/login.html" class="dept-link">Accounts</a>
+                        <a href="../Management/login.html" class="dept-link">Management</a>
+                        <a href="../admin/login.html" class="dept-link">Admin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('storeLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            
+            // Reset error messages
+            document.getElementById('usernameError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
+            
+            // Basic validation
+            if (!username) {
+                document.getElementById('usernameError').textContent = 'Username is required';
+                document.getElementById('usernameError').style.display = 'block';
+                return;
+            }
+            
+            if (!password) {
+                document.getElementById('passwordError').textContent = 'Password is required';
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            loginBtn.disabled = true;
+            
+            // Simulate login request
+            setTimeout(() => {
+                // Hide loading state
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                loginBtn.disabled = false;
+                
+                // Set authentication for store department
+                localStorage.setItem('store_authenticated', 'true');
+                localStorage.setItem('store_user', JSON.stringify({
+                    name: username,
+                    role: 'store'
+                }));
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        });
+        
+        // Clear error when user starts typing
+        document.getElementById('username').addEventListener('input', function() {
+            document.getElementById('usernameError').style.display = 'none';
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('passwordError').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
